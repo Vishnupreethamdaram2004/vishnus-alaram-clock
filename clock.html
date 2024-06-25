@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    body{ align-items: center;
+       
+        background-image: linear-gradient(rgb(255, 90, 255), cyan);
+        background-repeat:no-repeat;
+        height : 800px;
+        
+    }
+    h2{ position: absolute;
+      left: 25%;
+      top:10%;
+
+    }
+    .one{ align-items: center;
+        justify-content: center;
+         position: absolute;
+        left: 400px;
+        top:150px;
+        height: 600px;
+        border-radius: 60px;
+        width: 500px;
+        background-color: whitesmoke;
+        display: flexbox;
+        opacity: .5;
+        
+    }
+    .material-icons{
+        font-size: 150px; color: black; 
+       position: absolute;
+       top: 5%;
+       left: 35%;
+    }
+  .one h1{
+    position: absolute;
+    top: 30%;
+    left: 18%;
+    font-size:60px;
+    
+  } 
+  .one p{
+    text-align: center;
+    font-size: 25px;
+    margin-top: 30%;
+    
+  }
+  .column select{
+    width: 100px;
+    height: 53px;
+    border: none;
+    outline: none;
+    background: none;
+    font-size: 19px;
+  }
+  .one .content{
+    width: 50%;
+    position: absolute;
+    top: 36%;
+    right: 19%;
+   
+    justify-content: space-between;
+    display:inline-flex;
+    padding: 100px;
+  }
+  .content.disable{
+    cursor: no-drop;
+  }
+  .content .column{
+    padding: 0 20px;
+    border-radius: 5px;
+    border: 6px solid #bfbfbf;
+    width: calc(100% / 3 - 5px);
+  }
+  .content.disable .column{
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  .one button{
+    position: absolute;
+    top: 70%;
+    left: 21%;
+    width: 60%;
+    border: none;
+    outline: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 20px;
+    padding: 17px 0;
+    margin-top: 20px;
+    border-radius: 5px;
+    background-color: black;
+    opacity: 1;
+  }
+</style>
+<body>
+   <h2 ><em>"It's really clear that the most precious resource we all have is Time" </em></h2>
+    <div class="one">
+        <i class="material-icons" >alarm</i>
+        <br>
+       <h1 class="current-time">
+        <span id="hrs">00</span>
+        <span>:</span>
+        <span id="min">00</span>
+        <span>:</span>
+        <span id="sec">00</span>
+       </h1>
+       <br>
+       <p>
+        Alarm Clock
+       </p>
+    <div><br>
+      <div class='content'>
+        <div class="column">
+            <select>
+                <option value="Hours" select disabled hour >Hours</option>
+            </select>
+        </div>
+        <div class="column">
+            <select>
+                <option value="Minutes" select disabled minutes>Minutes</option>
+            </select>
+        </div>
+        <div class="column">
+            <select>
+                <option value="AM/PM" select disabled hidden>AM/PM</option>
+            </select>
+        </div>
+
+    </div>
+    <button>set an Alarm</button>
+    </div>
+    <script>
+       
+  const currentTime = document.querySelector("h1"),
+content = document.querySelector(".content"),
+selectMenu = document.querySelectorAll("select"),
+setAlarmBtn = document.querySelector("button");
+
+
+
+  let alarmTime, isAlarmSet,
+ringtone = new Audio("iphone_alarm.mp3");
+
+for (let i = 12; i > 0; i--) {
+    i = i < 10 ? `0${i}` : i;
+    let option = `<option value="${i}">${i}</option>`;
+    selectMenu[0].firstElementChild.insertAdjacentHTML("afterend", option);
+}
+
+for (let i = 59; i >= 0; i--) {
+    i = i < 10 ? `0${i}` : i;
+    let option = `<option value="${i}">${i}</option>`;
+    selectMenu[1].firstElementChild.insertAdjacentHTML("afterend", option);
+}
+
+for (let i = 2; i > 0; i--) {
+    let ampm = i == 1 ? "AM" : "PM";
+    let option = `<option value="${ampm}">${ampm}</option>`;
+    selectMenu[2].firstElementChild.insertAdjacentHTML("afterend", option);
+}
+
+setInterval(() => {
+    let date = new Date(),
+    h = date.getHours(),
+    m = date.getMinutes(),
+    s = date.getSeconds(),
+    ampm = "AM";
+    if(h >= 12) {
+        h = h - 12;
+        ampm = "PM";
+    }
+    h = h == 0 ? h = 12 : h;
+    h = h < 10 ? "0" + h : h;
+    m = m < 10 ? "0" + m : m;
+    s = s < 10 ? "0" + s : s;
+    currentTime.innerText = `${h}:${m}:${s} ${ampm}`;
+
+    if (alarmTime === `${h}:${m} ${ampm}`) {
+        ringtone.play();
+        ringtone.loop = true;
+    }
+});
+
+function setAlarm() {
+    if (isAlarmSet) {
+        alarmTime = "";
+        ringtone.pause();
+        content.classList.remove("disable");
+        setAlarmBtn.innerText = "Set Alarm";
+        return isAlarmSet = false;
+    }
+
+    let time = `${selectMenu[0].value}:${selectMenu[1].value} ${selectMenu[2].value}`;
+    if (time.includes("Hour") || time.includes("Minute") || time.includes("AM/PM")) {
+        return alert("Please, select a valid time to set Alarm!");
+    }
+    alarmTime = time;
+    isAlarmSet = true;
+    content.classList.add("disable");
+    setAlarmBtn.innerText = "Clear Alarm";
+}
+
+setAlarmBtn.addEventListener("click", setAlarm);
+    </script>
+</body>
+</html>
